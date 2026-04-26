@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4f8ff;
+  --foreground: #171923;
+  --muted-foreground: #7b8191;
+  --primary: #2f6cf6;
+  --primary-strong: #1f5ae0;
+  --secondary: #234b97;
+  --secondary-soft: #5e92f7;
+  --card: #ffffff;
+  --soft: #eff5ff;
+  --border: #d7e6ff;
+  --ring: #93b7ff;
+  --success: #1cc85e;
+  --warning: #6d3df0;
+  --danger: #ff4d4f;
+  --shadow: 0 24px 60px rgba(25, 52, 109, 0.08);
+  --radius: 1rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Consolas", "SFMono-Regular", monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: rgba(47, 108, 246, 0.18);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(35, 75, 151, 0.22);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(215, 230, 255, 0.45);
+}
+
+.app-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(47, 108, 246, 0.08), transparent 28%),
+    linear-gradient(180deg, #f6f9ff 0%, #ffffff 100%);
+}
+
+.dashboard-card {
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.table-grid {
+  min-width: 980px;
+}
+
+.auth-road {
+  position: absolute;
+  border: 3px solid rgba(123, 129, 145, 0.22);
+  border-style: solid dashed dashed solid;
+  border-radius: 999px;
+}
+
+.auth-road::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 3px dashed rgba(123, 129, 145, 0.38);
+  border-radius: inherit;
+}
+
+.metric-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-glow::before {
+  content: "";
+  position: absolute;
+  inset: auto -24px -34px auto;
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(47, 108, 246, 0.16), transparent 68%);
+}
+
+.gradient-primary {
+  background: linear-gradient(180deg, #4b84ff 0%, #1560f5 100%);
+}
+
+.soft-panel {
+  background: linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+}
