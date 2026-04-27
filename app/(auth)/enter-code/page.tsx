@@ -14,7 +14,9 @@ export default function EnterCodePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
-  const [digits, setDigits] = useState(() => Array.from({ length: OTP_LENGTH }, () => ""));
+  const [digits, setDigits] = useState(() =>
+    Array.from({ length: OTP_LENGTH }, () => ""),
+  );
   const [countdown, setCountdown] = useState(60);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -26,7 +28,10 @@ export default function EnterCodePage() {
 
   useEffect(() => {
     if (countdown <= 0) return;
-    const timer = window.setTimeout(() => setCountdown((value) => value - 1), 1000);
+    const timer = window.setTimeout(
+      () => setCountdown((value) => value - 1),
+      1000,
+    );
     return () => window.clearTimeout(timer);
   }, [countdown]);
 
@@ -69,7 +74,10 @@ export default function EnterCodePage() {
     }
   }
 
-  function handleKeyDown(index: number, event: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(
+    index: number,
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) {
     if (event.key === "Backspace" && !digits[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -120,7 +128,7 @@ export default function EnterCodePage() {
               onKeyDown={(event) => handleKeyDown(index, event)}
               onPaste={handlePaste}
               maxLength={1}
-              className="h-14 w-12 rounded-xl border border-[var(--primary)] bg-white text-center text-2xl font-semibold text-[var(--primary)] outline-none focus:ring-4 focus:ring-[rgba(47,108,246,0.12)] sm:w-14"
+              className="h-14 w-12 rounded-xl border border-[var(--primary)] bg-white text-center text-xl font-semibold text-[var(--primary)] outline-none focus:ring-4 focus:ring-[rgba(47,108,246,0.12)] sm:w-14"
             />
           ))}
         </div>
@@ -139,7 +147,11 @@ export default function EnterCodePage() {
           )}
         </div>
 
-        <Button type="submit" className="w-full" loading={verifyMutation.isPending}>
+        <Button
+          type="submit"
+          className="w-full"
+          loading={verifyMutation.isPending}
+        >
           Verify
         </Button>
       </form>

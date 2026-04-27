@@ -15,8 +15,8 @@ export function ProfileAvatar({
 
   const sizes = {
     sm: "size-10 text-sm",
-    md: "size-14 text-lg",
-    lg: "size-20 text-2xl",
+    md: "size-14 text-md",
+    lg: "size-20 text-xl",
   };
 
   if (image) {

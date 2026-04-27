@@ -143,6 +143,17 @@ export async function updateProfile(payload: ProfileUpdatePayload) {
   return response.data.data.user;
 }
 
+export async function uploadProfileImage(file: File) {
+  const formData = new FormData();
+  formData.append("avatar", file);
+  const response = await api.post<ApiEnvelope<{ profile_image_url: string }>>(
+    "/users/profile/avatar",
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } },
+  );
+  return response.data.data;
+}
+
 export async function changePassword(payload: ChangePasswordPayload) {
   const response = await api.put<ApiEnvelope<Record<string, never>>>(
     "/users/change-password",

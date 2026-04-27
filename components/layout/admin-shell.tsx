@@ -53,9 +53,11 @@ function SidebarContent({
   return (
     <div className="flex h-full flex-col justify-between bg-[var(--secondary)] px-5 py-8 text-white">
       <div className="space-y-8">
-        <Link href="/dashboard" className="block" onClick={onNavigate}>
-          <Logo priority className="w-14 md:w-16" />
-        </Link>
+        <div className="flex items-center justify-center">
+          <Link href="/dashboard" className="block" onClick={onNavigate}>
+            <Logo priority className="w-20 md:w-20" />
+          </Link>
+        </div>
 
         <nav className="space-y-3">
           {navigation.map((item) => {
@@ -71,7 +73,8 @@ function SidebarContent({
                 onClick={onNavigate}
                 className={cn(
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-[16px] leading-[1.2] font-medium text-white/92 hover:bg-white/10",
-                  isActive && "bg-[var(--secondary-soft)] shadow-[0_10px_24px_rgba(0,0,0,0.12)]",
+                  isActive &&
+                    "bg-[var(--secondary-soft)] shadow-[0_10px_24px_rgba(0,0,0,0.12)]",
                 )}
               >
                 <item.icon className="size-5" />
@@ -172,7 +175,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <SidebarContent pathname={pathname} onNavigate={() => setMobileOpen(false)} />
+              <SidebarContent
+                pathname={pathname}
+                onNavigate={() => setMobileOpen(false)}
+              />
             </div>
           </div>
         </div>
@@ -195,7 +201,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 {breadcrumbs.map((item, index) => {
                   const isLast = index === breadcrumbs.length - 1;
                   return (
-                    <div key={item.href} className="flex min-w-0 items-center gap-2">
+                    <div
+                      key={item.href}
+                      className="flex min-w-0 items-center gap-2"
+                    >
                       {index > 0 ? (
                         <ChevronRight className="size-4 shrink-0 text-[#9aa3b6]" />
                       ) : null}
@@ -204,7 +213,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                           {item.label}
                         </span>
                       ) : (
-                        <Link href={item.href} className="truncate text-[var(--muted-foreground)]">
+                        <Link
+                          href={item.href}
+                          className="truncate text-[var(--muted-foreground)]"
+                        >
                           {item.label}
                         </Link>
                       )}
@@ -219,7 +231,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 <p className="text-[14px] leading-[1.2] font-medium text-[var(--foreground)]">
                   {currentUser.first_name || currentUser.last_name
                     ? `${currentUser.first_name ?? ""} ${currentUser.last_name ?? ""}`.trim()
-                    : currentUser.username ?? "Admin"}
+                    : (currentUser.username ?? "Admin")}
                 </p>
                 <p className="text-[14px] leading-[1.2] font-normal text-[var(--muted-foreground)]">
                   {(currentUser.role ?? "admin").replace("_", " ")}
@@ -230,7 +242,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+          {children}
+        </main>
       </div>
     </div>
   );

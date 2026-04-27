@@ -15,8 +15,8 @@ import { formatCurrency, formatDate, getFullName } from "@/lib/utils";
 function InfoField({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-2">
-      <p className="text-lg font-medium text-[var(--foreground)]">{label}</p>
-      <div className="rounded-2xl bg-[var(--soft)] px-4 py-4 text-lg text-[var(--secondary)]">
+      <p className="text-md font-medium text-[var(--foreground)]">{label}</p>
+      <div className="rounded-2xl bg-[var(--soft)] px-4 py-4 text-md text-[var(--secondary)]">
         {value || "--"}
       </div>
     </div>
@@ -65,20 +65,25 @@ export default function PassengerDetailPage() {
           <ProfileAvatar user={passenger} size="lg" />
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-4xl font-bold text-[var(--foreground)]">
+              <h1 className="text-3xl font-bold text-[var(--foreground)]">
                 {getFullName(passenger)}
               </h1>
               <StatusPill value={passenger.status} />
             </div>
-            <p className="text-2xl text-[var(--muted-foreground)]">Id:{passenger._id.slice(-6)}</p>
-            <p className="text-lg text-[var(--muted-foreground)]">
+            <p className="text-xl text-[var(--muted-foreground)]">
+              Id:{passenger._id.slice(-6)}
+            </p>
+            <p className="text-md text-[var(--muted-foreground)]">
               Joined {formatDate(passenger.join_date)}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="secondary" onClick={() => router.push("/passengers")}>
+          <Button
+            variant="secondary"
+            onClick={() => router.push("/passengers")}
+          >
             Back
           </Button>
           {passenger.status !== "blocked" ? (
@@ -99,7 +104,10 @@ export default function PassengerDetailPage() {
         </CardHeader>
         <CardContent className="grid gap-5 md:grid-cols-3">
           <InfoField label="Email" value={passenger.email} />
-          <InfoField label="Phone Number" value={passenger.phone_number ?? "--"} />
+          <InfoField
+            label="Phone Number"
+            value={passenger.phone_number ?? "--"}
+          />
           <InfoField label="Address" value={passenger.address ?? "--"} />
         </CardContent>
       </Card>
@@ -110,7 +118,10 @@ export default function PassengerDetailPage() {
         </CardHeader>
         <CardContent className="grid gap-5 md:grid-cols-3">
           <InfoField label="Total Ride" value={String(passenger.total_rides)} />
-          <InfoField label="Total Spent" value={formatCurrency(passenger.total_spent)} />
+          <InfoField
+            label="Total Spent"
+            value={formatCurrency(passenger.total_spent)}
+          />
           <InfoField label="Account Status" value={passenger.status} />
         </CardContent>
       </Card>

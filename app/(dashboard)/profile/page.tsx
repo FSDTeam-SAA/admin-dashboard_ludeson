@@ -1,8 +1,8 @@
 "use client";
 
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Camera, ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ProfileAvatar } from "@/components/shared/profile-avatar";
@@ -16,13 +16,18 @@ import {
   getProfile,
   toApiError,
   updateProfile,
+  uploadProfileImage,
 } from "@/lib/api";
 import { getFullName } from "@/lib/utils";
 
 export default function ProfilePage() {
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [profileForm, setProfileForm] = useState<{
     first_name: string;
     last_name: string;
@@ -51,6 +56,15 @@ export default function ProfilePage() {
     onError: (error) => toast.error(toApiError(error).message),
   });
 
+  const uploadImageMutation = useMutation({
+    mutationFn: uploadProfileImage,
+    onSuccess: async () => {
+      toast.success("Profile image updated.");
+      await queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (error) => toast.error(toApiError(error).message),
+  });
+
   const changePasswordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
@@ -65,8 +79,16 @@ export default function ProfilePage() {
     onError: (error) => toast.error(toApiError(error).message),
   });
 
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      uploadImageMutation.mutate(file);
+    }
+    event.target.value = "";
+  }
+
   if (profileQuery.isLoading) {
-    return <Skeleton className="h-[640px] rounded-[20px]" />;
+    return <Skeleton className="h-160 rounded-[20px]" />;
   }
 
   if (!profileQuery.data) {
@@ -91,10 +113,32 @@ export default function ProfilePage() {
       <Card>
         <CardContent className="flex flex-col gap-5 pt-6 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-5">
-            <ProfileAvatar user={profile} size="lg" />
+            <div className="relative">
+              <ProfileAvatar user={profile} size="lg" />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadImageMutation.isPending}
+                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity hover:opacity-100 disabled:cursor-not-allowed"
+                aria-label="Upload profile image"
+              >
+                <Camera className="size-6 text-white" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </div>
             <div className="space-y-2">
-              <h1 className="text-4xl font-bold text-[var(--foreground)]">{getFullName(profile)}</h1>
-              <p className="text-2xl text-[var(--muted-foreground)]">{profile.email}</p>
+              <h1 className="text-3xl font-bold text-foreground">
+                {getFullName(profile)}
+              </h1>
+              <p className="text-xl text-(--muted-foreground)">
+                {profile.email}
+              </p>
             </div>
           </div>
           <StatusPill value={profile.role} className="min-w-32" />
@@ -130,7 +174,9 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--foreground)]">First Name</label>
+            <label className="text-sm font-medium text-foreground">
+              First Name
+            </label>
             <Input
               value={profileValues.first_name}
               disabled={!isEditing}
@@ -144,7 +190,9 @@ export default function ProfilePage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--foreground)]">Last Name</label>
+            <label className="text-sm font-medium text-foreground">
+              Last Name
+            </label>
             <Input
               value={profileValues.last_name}
               disabled={!isEditing}
@@ -158,11 +206,15 @@ export default function ProfilePage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--foreground)]">Email</label>
+            <label className="text-sm font-medium text-foreground">
+              Email
+            </label>
             <Input value={profile.email} disabled placeholder="Email" />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--foreground)]">Phone Number</label>
+            <label className="text-sm font-medium text-foreground">
+              Phone Number
+            </label>
             <Input
               value={profileValues.phone_number}
               disabled={!isEditing}
@@ -176,7 +228,9 @@ export default function ProfilePage() {
             />
           </div>
           <div className="space-y-2 md:col-span-2 xl:col-span-4">
-            <label className="text-sm font-medium text-[var(--foreground)]">Address</label>
+            <label className="text-sm font-medium text-foreground">
+              Address
+            </label>
             <Input
               value={profileValues.address}
               disabled={!isEditing}
@@ -198,58 +252,95 @@ export default function ProfilePage() {
           onClick={() => setShowPasswordForm((value) => !value)}
         >
           <CardTitle>Change Password</CardTitle>
-          {showPasswordForm ? <ChevronUp className="size-5" /> : <ChevronDown className="size-5" />}
+          {showPasswordForm ? (
+            <ChevronUp className="size-5" />
+          ) : (
+            <ChevronDown className="size-5" />
+          )}
         </CardHeader>
         {showPasswordForm ? (
           <CardContent className="space-y-5">
             <div className="grid gap-5 md:grid-cols-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[var(--foreground)]">
+                <label className="text-sm font-medium text-foreground">
                   Current Password
                 </label>
-                <Input
-                  type="password"
-                  value={passwordForm.current_password}
-                  onChange={(event) =>
-                    setPasswordForm((current) => ({
-                      ...current,
-                      current_password: event.target.value,
-                    }))
-                  }
-                  placeholder="Current Password"
-                />
+                <div className="relative">
+                  <Input
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={passwordForm.current_password}
+                    onChange={(event) =>
+                      setPasswordForm((current) => ({
+                        ...current,
+                        current_password: event.target.value,
+                      }))
+                    }
+                    placeholder="Current Password"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[var(--foreground)]">
+                <label className="text-sm font-medium text-foreground">
                   New Password
                 </label>
-                <Input
-                  type="password"
-                  value={passwordForm.new_password}
-                  onChange={(event) =>
-                    setPasswordForm((current) => ({
-                      ...current,
-                      new_password: event.target.value,
-                    }))
-                  }
-                  placeholder="New Password"
-                />
+                <div className="relative">
+                  <Input
+                    type={showNewPassword ? "text" : "password"}
+                    value={passwordForm.new_password}
+                    onChange={(event) =>
+                      setPasswordForm((current) => ({
+                        ...current,
+                        new_password: event.target.value,
+                      }))
+                    }
+                    placeholder="New Password"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[var(--foreground)]">
+                <label className="text-sm font-medium text-foreground">
                   Confirm Password
                 </label>
-                <Input
-                  type="password"
-                  value={passwordForm.confirm_password}
-                  onChange={(event) =>
-                    setPasswordForm((current) => ({
-                      ...current,
-                      confirm_password: event.target.value,
-                    }))
-                  }
-                  placeholder="Confirm Password"
-                />
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={passwordForm.confirm_password}
+                    onChange={(event) =>
+                      setPasswordForm((current) => ({
+                        ...current,
+                        confirm_password: event.target.value,
+                      }))
+                    }
+                    placeholder="Confirm Password"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex justify-end">

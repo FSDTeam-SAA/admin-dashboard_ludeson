@@ -13,8 +13,12 @@ export function EmptyState({
         <Inbox className="size-6" />
       </div>
       <div className="space-y-1">
-        <p className="text-lg font-semibold text-[var(--foreground)]">{title}</p>
-        <p className="max-w-md text-sm text-[var(--muted-foreground)]">{description}</p>
+        <p className="text-md font-semibold text-[var(--foreground)]">
+          {title}
+        </p>
+        <p className="max-w-md text-sm text-[var(--muted-foreground)]">
+          {description}
+        </p>
       </div>
     </div>
   );

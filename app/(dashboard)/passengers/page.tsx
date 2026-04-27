@@ -31,7 +31,7 @@ export default function PassengersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-4xl font-bold tracking-tight text-[var(--foreground)]">
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">
           All Passengers List
         </h1>
         <select
@@ -40,7 +40,7 @@ export default function PassengersPage() {
             setPage(1);
             setStatus(event.target.value);
           }}
-          className="h-12 rounded-2xl border border-[var(--border)] bg-white px-4 text-lg font-medium text-[var(--foreground)] shadow-sm outline-none"
+          className="h-12 rounded-2xl border border-[var(--border)] bg-white px-4 text-md font-medium text-[var(--foreground)] shadow-sm outline-none"
         >
           <option value="all">All</option>
           <option value="active">Active</option>
@@ -56,7 +56,7 @@ export default function PassengersPage() {
           <div className="overflow-x-auto">
             <table className="table-grid min-w-full">
               <thead className="border-b border-[var(--border)] text-left">
-                <tr className="text-lg font-medium text-[var(--muted-foreground)]">
+                <tr className="text-md font-medium text-[var(--muted-foreground)]">
                   <th className="px-6 py-5">Passenger Name</th>
                   <th className="px-6 py-5">Contact Information</th>
                   <th className="px-6 py-5">Status</th>
@@ -68,34 +68,37 @@ export default function PassengersPage() {
               </thead>
               <tbody>
                 {passengers.map((passenger) => (
-                  <tr key={passenger._id} className="border-b border-[var(--border)] last:border-b-0">
+                  <tr
+                    key={passenger._id}
+                    className="border-b border-[var(--border)] last:border-b-0"
+                  >
                     <td className="px-6 py-6">
                       <div className="flex items-center gap-4">
                         <ProfileAvatar user={passenger} />
                         <div>
-                          <p className="text-2xl font-semibold text-[var(--foreground)]">
+                          <p className="text-xl font-semibold text-[var(--foreground)]">
                             {getFullName(passenger)}
                           </p>
-                          <p className="text-lg text-[var(--muted-foreground)]">
+                          <p className="text-md text-[var(--muted-foreground)]">
                             ID: {passenger._id.slice(-6)}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6 text-lg text-[var(--muted-foreground)]">
+                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
                       <p>{passenger.email}</p>
                       <p>{passenger.phone_number ?? "--"}</p>
                     </td>
                     <td className="px-6 py-6">
                       <StatusPill value={passenger.status} />
                     </td>
-                    <td className="px-6 py-6 text-lg text-[var(--muted-foreground)]">
+                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
                       {formatDaysSince(passenger.createdAt)}
                     </td>
-                    <td className="px-6 py-6 text-lg text-[var(--muted-foreground)]">
+                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
                       {passenger.total_rides}
                     </td>
-                    <td className="px-6 py-6 text-lg text-[var(--muted-foreground)]">
+                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
                       {formatCurrency(passenger.total_amount)}
                     </td>
                     <td className="px-6 py-6">
@@ -121,11 +124,15 @@ export default function PassengersPage() {
         )}
       </Card>
 
-      <div className="flex flex-col justify-between gap-4 text-lg text-[var(--muted-foreground)] sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-4 text-md text-[var(--muted-foreground)] sm:flex-row sm:items-center">
         <p>
           Showing {start} to {end} of {total} results
         </p>
-        <PaginationControls page={page} totalPages={totalPages} onPageChange={setPage} />
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );
