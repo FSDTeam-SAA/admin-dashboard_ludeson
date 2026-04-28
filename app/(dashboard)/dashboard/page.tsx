@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, CarFront, DollarSign, PiggyBank, Users } from "lucide-react";
+import { CalendarDays, CarFront, DollarSign, MoreVertical, PiggyBank, Users } from "lucide-react";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { TopDriversChart } from "@/components/dashboard/top-drivers-chart";
 import { UserStatusChart } from "@/components/dashboard/user-status-chart";
@@ -17,11 +17,11 @@ import { getDashboardSummary, getNewDrivers, getTopDrivers, getUserStatus } from
 import { formatCurrency, formatDaysSince, getFullName } from "@/lib/utils";
 import type { DashboardPeriod } from "@/types";
 
-const periodOptions: Array<{ value: DashboardPeriod; label: string }> = [
-  { value: "month", label: "This month" },
-  { value: "3month", label: "3 Month" },
-  { value: "6month", label: "6 Month" },
-  { value: "custom", label: "Custom" },
+const periodOptions: Array<{ value: DashboardPeriod; label: string; changeLabel: string }> = [
+  { value: "month", label: "This month", changeLabel: "last month" },
+  { value: "3month", label: "3 Month", changeLabel: "last 3 months" },
+  { value: "6month", label: "6 Month", changeLabel: "last 6 months" },
+  { value: "custom", label: "Custom", changeLabel: "previous period" },
 ];
 
 export default function DashboardPage() {
@@ -54,6 +54,7 @@ export default function DashboardPage() {
   });
 
   const summary = summaryQuery.data;
+  const changeLabel = periodOptions.find((o) => o.value === period)?.changeLabel ?? "last month";
 
   return (
     <div className="space-y-8">
@@ -107,30 +108,35 @@ export default function DashboardPage() {
             value={summary.total_active_passengers.value.toString()}
             change={summary.total_active_passengers.change_pct}
             icon={Users}
+            periodLabel={changeLabel}
           />
           <MetricCard
             title="Total Active Driver"
             value={summary.total_active_drivers.value.toString()}
             change={summary.total_active_drivers.change_pct}
             icon={CarFront}
+            periodLabel={changeLabel}
           />
           <MetricCard
             title="Drivers Total Earning"
             value={formatCurrency(summary.drivers_total_earning.value)}
             change={summary.drivers_total_earning.change_pct}
             icon={DollarSign}
+            periodLabel={changeLabel}
           />
           <MetricCard
             title="Your Total Earning"
             value={formatCurrency(summary.your_total_earning.value)}
             change={summary.your_total_earning.change_pct}
             icon={PiggyBank}
+            periodLabel={changeLabel}
           />
           <MetricCard
             title="Total Ride Completed"
             value={summary.total_ride_completed.value.toString()}
             change={summary.total_ride_completed.change_pct}
             icon={CarFront}
+            periodLabel={changeLabel}
           />
         </div>
       ) : (
@@ -141,16 +147,16 @@ export default function DashboardPage() {
       )}
 
       <div className="grid gap-5 xl:grid-cols-[420px_minmax(0,1fr)]">
-        {userStatusQuery.data ? (
-          <UserStatusChart data={userStatusQuery.data} />
+        {userStatusQuery.isLoading ? (
+          <Skeleton className="h-[400px] rounded-[20px]" />
         ) : (
-          <Skeleton className="h-[620px] rounded-[20px]" />
+          <UserStatusChart data={userStatusQuery.data ?? { passengers_count: 0, drivers_count: 0, passengers_pct: "0", drivers_pct: "0" }} />
         )}
 
-        {topDriversQuery.data?.top_drivers?.length ? (
-          <TopDriversChart drivers={topDriversQuery.data.top_drivers} />
+        {topDriversQuery.isLoading ? (
+          <Skeleton className="h-[400px] rounded-[20px]" />
         ) : (
-          <Skeleton className="h-[620px] rounded-[20px]" />
+          <TopDriversChart drivers={topDriversQuery.data?.top_drivers ?? []} />
         )}
       </div>
 
@@ -169,7 +175,7 @@ export default function DashboardPage() {
             <TableSkeleton columns={7} rows={4} />
           ) : newDriversQuery.data?.drivers?.length ? (
             <div className="overflow-x-auto">
-              <table className="table-grid min-w-full text-left">
+              <table className="w-full border-collapse text-left">
                 <thead className="border-b border-[var(--border)] bg-white">
                   <tr className="text-[16px] leading-[1.2] font-normal text-[var(--muted-foreground)]">
                     <th className="px-6 py-5">Driver Name</th>
@@ -216,9 +222,10 @@ export default function DashboardPage() {
                       <td className="px-6 py-6">
                         <Link
                           href={`/drivers/${driver._id}`}
-                          className="inline-flex h-9 items-center justify-center rounded-lg border border-[var(--primary)] px-3 text-[14px] leading-[1.2] font-normal text-[var(--primary)] hover:bg-[var(--soft)]"
+                          className="inline-flex size-9 items-center justify-center rounded-full text-[var(--muted-foreground)] hover:bg-[var(--soft)] hover:text-[var(--foreground)]"
+                          aria-label="View driver details"
                         >
-                          View details
+                          <MoreVertical className="size-5" />
                         </Link>
                       </td>
                     </tr>

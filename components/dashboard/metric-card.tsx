@@ -7,11 +7,13 @@ export function MetricCard({
   value,
   change,
   icon: Icon,
+  periodLabel = "last month",
 }: {
   title: string;
   value: string;
   change: number;
   icon: LucideIcon;
+  periodLabel?: string;
 }) {
   return (
     <Card className="metric-glow p-6">
@@ -25,7 +27,7 @@ export function MetricCard({
               {value}
             </p>
             <p className="text-[14px] leading-[1.2] font-normal text-[var(--muted-foreground)]">
-              {formatPercent(change)} from last period
+              {formatPercent(change)} from {periodLabel}
             </p>
           </div>
         </div>

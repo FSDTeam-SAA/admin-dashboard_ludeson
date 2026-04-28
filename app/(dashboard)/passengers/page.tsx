@@ -3,14 +3,21 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ChevronDown, MoreVertical } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PaginationControls } from "@/components/shared/pagination-controls";
-import { ProfileAvatar } from "@/components/shared/profile-avatar";
 import { StatusPill } from "@/components/shared/status-pill";
 import { TableSkeleton } from "@/components/shared/table-skeleton";
 import { Card } from "@/components/ui/card";
 import { getPassengers } from "@/lib/api";
 import { formatCurrency, formatDaysSince, getFullName } from "@/lib/utils";
+
+const passengerStatusOptions = [
+  { value: "all", label: "All" },
+  { value: "active", label: "Active" },
+  { value: "inactive", label: "Inactive" },
+  { value: "blocked", label: "Blocked" },
+];
 
 export default function PassengersPage() {
   const [page, setPage] = useState(1);
@@ -29,84 +36,86 @@ export default function PassengersPage() {
   const end = total ? Math.min(page * 10, total) : 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <h1 className="text-[2.1rem] leading-none font-semibold tracking-[-0.04em] text-[#111827]">
           All Passengers List
         </h1>
-        <select
-          value={status}
-          onChange={(event) => {
-            setPage(1);
-            setStatus(event.target.value);
-          }}
-          className="h-12 rounded-2xl border border-[var(--border)] bg-white px-4 text-md font-medium text-[var(--foreground)] shadow-sm outline-none"
-        >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="blocked">Blocked</option>
-        </select>
+        <div className="relative w-full max-w-[104px] shrink-0">
+          <select
+            value={status}
+            onChange={(event) => {
+              setPage(1);
+              setStatus(event.target.value);
+            }}
+            className="h-[42px] w-full appearance-none rounded-[12px] border border-[#ddd6cb] bg-white pl-4 pr-10 text-[15px] font-normal text-[#555b67] outline-none"
+          >
+            {passengerStatusOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-[#9ca3af]" />
+        </div>
       </div>
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden rounded-[12px] border border-[#e4ddd2] bg-white shadow-none">
         {passengersQuery.isLoading ? (
           <TableSkeleton columns={7} rows={6} />
         ) : passengers.length ? (
           <div className="overflow-x-auto">
-            <table className="table-grid min-w-full">
-              <thead className="border-b border-[var(--border)] text-left">
-                <tr className="text-md font-medium text-[var(--muted-foreground)]">
-                  <th className="px-6 py-5">Passenger Name</th>
-                  <th className="px-6 py-5">Contact Information</th>
-                  <th className="px-6 py-5">Status</th>
-                  <th className="px-6 py-5">Total Days</th>
-                  <th className="px-6 py-5">Total Ride</th>
-                  <th className="px-6 py-5">Total Amount</th>
-                  <th className="px-6 py-5">Actions</th>
+            <table className="w-full border-collapse text-left">
+              <thead className="border-b border-[#e8e1d7] bg-white">
+                <tr className="text-[15px] leading-[1.2] font-normal text-[#787d88]">
+                  <th className="w-[210px] px-8 py-5">Passenger Name</th>
+                  <th className="w-[250px] px-8 py-5">Contact Information</th>
+                  <th className="w-[150px] px-8 py-5">Status</th>
+                  <th className="w-[130px] px-8 py-5 text-center">Total Days</th>
+                  <th className="w-[120px] px-8 py-5 text-center">Total Ride</th>
+                  <th className="w-[150px] px-8 py-5 text-center">Total Amount</th>
+                  <th className="w-[160px] px-8 py-5 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {passengers.map((passenger) => (
                   <tr
                     key={passenger._id}
-                    className="border-b border-[var(--border)] last:border-b-0"
+                    className="border-b border-[#e8e1d7] last:border-b-0"
                   >
-                    <td className="px-6 py-6">
-                      <div className="flex items-center gap-4">
-                        <ProfileAvatar user={passenger} />
-                        <div>
-                          <p className="text-xl font-semibold text-[var(--foreground)]">
-                            {getFullName(passenger)}
-                          </p>
-                          <p className="text-md text-[var(--muted-foreground)]">
-                            ID: {passenger._id.slice(-6)}
-                          </p>
-                        </div>
+                    <td className="px-8 py-[18px] align-middle">
+                      <div className="space-y-[10px]">
+                        <p className="text-[15px] leading-[1.2] font-medium text-[#111827]">
+                          {getFullName(passenger)}
+                        </p>
+                        <p className="text-[14px] leading-[1.2] text-[#767c88]">
+                          ID: {passenger._id.slice(-6)}
+                        </p>
                       </div>
                     </td>
-                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
+                    <td className="px-8 py-[18px] align-middle text-[14px] leading-[1.2] text-[#767c88]">
                       <p>{passenger.email}</p>
-                      <p>{passenger.phone_number ?? "--"}</p>
+                      <p className="mt-[10px]">{passenger.phone_number ?? "--"}</p>
                     </td>
-                    <td className="px-6 py-6">
+                    <td className="px-8 py-[18px] align-middle">
                       <StatusPill value={passenger.status} />
                     </td>
-                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
+                    <td className="px-8 py-[18px] text-center align-middle text-[14px] leading-[1.2] text-[#767c88]">
                       {formatDaysSince(passenger.createdAt)}
                     </td>
-                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
+                    <td className="px-8 py-[18px] text-center align-middle text-[14px] leading-[1.2] text-[#767c88]">
                       {passenger.total_rides}
                     </td>
-                    <td className="px-6 py-6 text-md text-[var(--muted-foreground)]">
+                    <td className="px-8 py-[18px] text-center align-middle text-[14px] leading-[1.2] text-[#767c88]">
                       {formatCurrency(passenger.total_amount)}
                     </td>
-                    <td className="px-6 py-6">
+                    <td className="px-8 py-[18px] flex items-center justify-center align-middle">
                       <Link
                         href={`/passengers/${passenger._id}`}
-                        className="text-base font-semibold text-[var(--primary)]"
+                        className="inline-flex size-8 items-center justify-center text-[#111827]"
+                        aria-label="View passenger details"
                       >
-                        View details
+                        <MoreVertical className="size-5" strokeWidth={2.2} />
                       </Link>
                     </td>
                   </tr>
@@ -124,8 +133,8 @@ export default function PassengersPage() {
         )}
       </Card>
 
-      <div className="flex flex-col justify-between gap-4 text-md text-[var(--muted-foreground)] sm:flex-row sm:items-center">
-        <p>
+      <div className="flex flex-col justify-between gap-4 pt-1 text-[17px] leading-[1.2] text-[#8b9099] sm:flex-row sm:items-center">
+        <p className="font-normal">
           Showing {start} to {end} of {total} results
         </p>
         <PaginationControls

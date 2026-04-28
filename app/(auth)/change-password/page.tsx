@@ -48,7 +48,7 @@ export default function ChangePasswordPage() {
 
   return (
     <AuthShell
-      title="Change Password"
+      title="Reset Password"
       description="Enter a strong password to protect your account"
     >
       <form className="space-y-5" onSubmit={handleSubmit}>

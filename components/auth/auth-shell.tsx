@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 
@@ -15,36 +14,48 @@ export function AuthShell({
 }) {
   return (
     <div className="relative min-h-screen overflow-hidden bg-white">
-      <div className="auth-road -left-28 bottom-[-120px] h-72 w-72 md:-left-16 md:bottom-[-90px]" />
-      <div className="auth-road -right-14 top-[-84px] h-72 w-72 md:-right-10 md:top-[-120px]" />
+      {/* Decorative Roads */}
+      <img
+        src="/branding/road-bl.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-4 -bottom-4 z-50 w-[300px]  opacity-70 select-none md:w-[360px]"
+      />
 
-      <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="relative hidden items-center justify-center overflow-hidden bg-[#f2f7ff] px-10 py-12 lg:flex">
-          <div className="relative flex w-full max-w-4xl items-center justify-center">
-            <Image
-              src="/branding/auth-illustration.png"
-              alt="Muvbay transport illustration"
-              width={960}
-              height={960}
-              priority
+      <img
+        src="/branding/road-tr.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-4 -top-4 z-10 w-[300px] opacity-70 select-none md:w-[360px]"
+      />
+
+      <div className="relative z-20 grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
+        {/* Left Side Illustration */}
+        <div className="relative hidden items-center justify-center overflow-hidden bg-[#f4f8ff] px-10 py-12 lg:flex">
+          <div className="w-full max-w-[720px]">
+            <img
+              src="/branding/auth-img.png"
+              alt="Transport Illustration"
               className="h-auto w-full object-contain"
             />
           </div>
         </div>
 
-        <div className="relative flex min-h-screen items-center justify-center px-5 py-12 sm:px-8">
-          <div className="w-full max-w-[440px] space-y-8">
-            <div className="flex flex-col items-center gap-5 text-center">
-              <Logo priority className="w-20 md:w-24" />
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight text-[var(--primary)]">
+        {/* Right Side Form */}
+        <div className="relative flex min-h-screen items-center justify-center px-6 py-12">
+          <div className="w-full max-w-[460px]">
+            <div className="flex flex-col items-center text-center">
+              <Logo priority className="mb-6 w-24 md:w-28" />
+
+              <div className="mb-14 space-y-2">
+                <h1 className="text-2xl font-bold tracking-tight text-[#2876f9] md:text-[26px]">
                   {title}
                 </h1>
-                <p className="text-base text-[var(--muted-foreground)]">{description}</p>
+                <p className="text-[15px] text-[#8b8b8b]">{description}</p>
               </div>
             </div>
 
-            <div className={cn("space-y-6", className)}>{children}</div>
+            <div className={cn("w-full", className)}>{children}</div>
           </div>
         </div>
       </div>

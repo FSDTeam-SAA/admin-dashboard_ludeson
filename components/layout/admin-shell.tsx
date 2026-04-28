@@ -51,15 +51,15 @@ function SidebarContent({
   });
 
   return (
-    <div className="flex h-full flex-col justify-between bg-[var(--secondary)] px-5 py-8 text-white">
-      <div className="space-y-8">
-        <div className="flex items-center justify-center">
+    <div className="flex h-full flex-col justify-between bg-[#244d97] px-[18px] py-9 text-white">
+      <div className="space-y-12">
+        <div className="flex items-center px-3">
           <Link href="/dashboard" className="block" onClick={onNavigate}>
-            <Logo priority className="w-20 md:w-20" />
+            <Logo priority className="w-[72px]" />
           </Link>
         </div>
 
-        <nav className="space-y-3">
+        <nav className="space-y-[10px]">
           {navigation.map((item) => {
             const isActive =
               item.href === "/dashboard"
@@ -72,12 +72,12 @@ function SidebarContent({
                 href={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "flex items-center gap-3 rounded-2xl px-4 py-3 text-[16px] leading-[1.2] font-medium text-white/92 hover:bg-white/10",
+                  "flex items-center gap-3 rounded-[6px] px-3 py-3 text-[16px] leading-[1.2] font-medium text-white hover:bg-white/10",
                   isActive &&
-                    "bg-[var(--secondary-soft)] shadow-[0_10px_24px_rgba(0,0,0,0.12)]",
+                    "bg-[#5f91f3] text-white hover:bg-[#5f91f3]",
                 )}
               >
-                <item.icon className="size-5" />
+                <item.icon className="size-[18px] shrink-0" strokeWidth={1.9} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -88,9 +88,9 @@ function SidebarContent({
       <button
         type="button"
         onClick={() => logoutMutation.mutate()}
-        className="flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-[16px] leading-[1.2] font-medium text-white/92 hover:bg-white/10"
+        className="flex items-center gap-3 rounded-[6px] px-3 py-3 text-left text-[16px] leading-[1.2] font-medium text-white hover:bg-white/10"
       >
-        <LogOut className="size-5" />
+        <LogOut className="size-[18px] shrink-0" strokeWidth={1.9} />
         <span>{logoutMutation.isPending ? "Logging out..." : "Log out"}</span>
       </button>
     </div>
@@ -185,19 +185,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-white/92 backdrop-blur">
-          <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
+        <header className="sticky top-0 z-30 border-b border-[#ddd6cb] bg-white">
+          <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10 lg:py-[18px]">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
                 onClick={() => setMobileOpen(true)}
-                className="flex size-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-white text-[var(--secondary)] shadow-sm lg:hidden"
+                className="flex size-11 items-center justify-center rounded-xl border border-[#ddd6cb] bg-white text-[#244d97] shadow-sm lg:hidden"
               >
                 <Menu className="size-5" />
               </button>
 
-              <div className="flex min-w-0 items-center gap-2 text-[16px] leading-[1.2]">
-                <Home className="size-5 shrink-0 text-[var(--foreground)]" />
+              <div className="flex min-w-0 items-center gap-[10px] text-[16px] leading-[1.2]">
+                <Home className="size-5 shrink-0 text-[#111827]" strokeWidth={2} />
                 {breadcrumbs.map((item, index) => {
                   const isLast = index === breadcrumbs.length - 1;
                   return (
@@ -206,16 +206,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                       className="flex min-w-0 items-center gap-2"
                     >
                       {index > 0 ? (
-                        <ChevronRight className="size-4 shrink-0 text-[#9aa3b6]" />
+                        <ChevronRight className="size-4 shrink-0 text-[#9ca3af]" />
                       ) : null}
                       {isLast ? (
-                        <span className="truncate font-semibold text-[var(--foreground)]">
+                        <span className="truncate font-semibold text-[#111827]">
                           {item.label}
                         </span>
                       ) : (
                         <Link
                           href={item.href}
-                          className="truncate text-[var(--muted-foreground)]"
+                          className="truncate text-[#7b8191]"
                         >
                           {item.label}
                         </Link>
@@ -226,23 +226,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <Link href="/profile" className="flex items-center gap-3">
-              <div className="hidden text-right sm:block">
-                <p className="text-[14px] leading-[1.2] font-medium text-[var(--foreground)]">
-                  {currentUser.first_name || currentUser.last_name
-                    ? `${currentUser.first_name ?? ""} ${currentUser.last_name ?? ""}`.trim()
-                    : (currentUser.username ?? "Admin")}
-                </p>
-                <p className="text-[14px] leading-[1.2] font-normal text-[var(--muted-foreground)]">
-                  {(currentUser.role ?? "admin").replace("_", " ")}
-                </p>
-              </div>
-              <ProfileAvatar user={currentUser} size="sm" />
+            <Link href="/profile" className="flex items-center" aria-label="View profile">
+              <ProfileAvatar user={currentUser} size="sm" className="size-12 border-[#d6d8de]" />
             </Link>
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-7">
           {children}
         </main>
       </div>
